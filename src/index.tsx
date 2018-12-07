@@ -1,23 +1,22 @@
-/**
- * @class ExampleComponent
- */
+import * as React from 'react';
 
-import * as React from 'react'
+// import styles from './styles.css'
 
-import styles from './styles.css'
+export type Props = { text: string };
 
-export type Props = { text: string }
-
-export default class ExampleComponent extends React.Component<Props> {
-  render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
-  }
+export function useLoading() {
+  const [isLoading, setState] = React.useState(false);
+  const load = (aPromise: Promise<any>) => {
+    setState(true);
+    return aPromise
+      .then((...args) => {
+        setState(false);
+        return Promise.resolve(...args);
+      })
+      .catch((...args) => {
+        setState(false);
+        return Promise.reject(...args);
+      });
+  };
+  return [isLoading, load];
 }

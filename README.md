@@ -13,18 +13,18 @@ npm install --save hooks
 ## Usage
 
 ```tsx
-import * as React from 'react'
+import * as React from 'react';
 
-import MyComponent from 'hooks'
+import MyComponent from 'hooks';
 
 class Example extends React.Component {
-  render () {
-    return (
-      <MyComponent />
-    )
+  render() {
+    return <MyComponent />;
   }
 }
 ```
+
+bootstrapped with Travis Fischer's wonderful https://www.npmjs.com/package/create-react-library
 
 ## License
 
