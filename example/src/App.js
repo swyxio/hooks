@@ -1,13 +1,31 @@
-import React, { Component } from 'react'
+import React from 'react';
 
-import ExampleComponent from 'hooks'
+import { useLoading } from 'hooks';
 
-export default class App extends Component {
-  render () {
-    return (
-      <div>
-        <ExampleComponent text='Modern React component module' />
-      </div>
-    )
-  }
+function TestUseLoading() {
+  const [isLoading, load] = useLoading();
+  const [state, setState] = React.useState();
+  const handler = () => {
+    load(fakeAPIcall()).then(() => setState(Math.floor(Math.random(100))));
+  };
+
+  return (
+    <div>
+      <button onClick={handler}>Click me</button>
+      <hr />
+      <div>api result: {isLoading ? 'loading...' : state}</div>
+    </div>
+  );
+}
+
+function fakeAPIcall(time = 500) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
+export default function App() {
+  return (
+    <div>
+      <TestUseLoading />
+    </div>
+  );
 }
