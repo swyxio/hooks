@@ -18,7 +18,7 @@ export function useProduceState(initState: any, observer: any = noop) {
     if (next) next(); // post setState callback
   };
   // return [state, useCallback(cb, [setState])];
-  return [state, cb];
+  return [state, cb] as [any, (mutatorOrValue: any, next?: Function) => {}];
 }
 
 // https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
@@ -45,7 +45,10 @@ export function useLoading() {
       setState(false);
     });
   };
-  return [isLoading, load];
+  return [isLoading, load] as [
+    boolean,
+    (aPromise: Promise<any>) => Promise<any>
+  ];
 }
 
 export function useKeydown(key: string, handler: Function) {
@@ -62,7 +65,7 @@ export function useKeydown(key: string, handler: Function) {
 }
 
 export function useLocalStorage(key: string, optionalCallback: any = noop) {
-  const [state, setState] = React.useState(null);
+  const [state, setState] = React.useState<any | null>(null);
   React.useEffect(() => {
     // chose to make this async
     const existingValue = localStorage.getItem(key);
@@ -82,7 +85,11 @@ export function useLocalStorage(key: string, optionalCallback: any = noop) {
     localStorage.setItem(key, JSON.stringify(obj));
     optionalCallback(obj);
   };
-  return [state, setItem, removeItem];
+  return [state, setItem, removeItem] as [
+    (any | null),
+    (obj: any) => void,
+    () => void
+  ];
 }
 
 // utils
