@@ -3,7 +3,10 @@ import produce from 'immer';
 
 export type Props = { text: string };
 
-export function useProduceState(initState: any, observer: any = noop) {
+export function useProduceState<S>(
+  initState: S | (() => S),
+  observer: ((newState: S) => void) = noop
+): [S, React.Dispatch<React.SetStateAction<S>>] {
   const [state, setState] = React.useState(initState);
   const cb = (mutatorOrValue: any, next?: Function) => {
     if (isFunction(mutatorOrValue)) {
@@ -18,7 +21,8 @@ export function useProduceState(initState: any, observer: any = noop) {
     if (next) next(); // post setState callback
   };
   // return [state, useCallback(cb, [setState])];
-  return [state, cb] as [any, (mutatorOrValue: any, next?: Function) => {}];
+  // return [state, cb] as [any, (mutatorOrValue: any, next?: Function) => {}];
+  return [state, cb];
 }
 
 // https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
