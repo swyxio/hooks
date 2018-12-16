@@ -4,19 +4,21 @@ import produce from 'immer';
 export type Props = { text: string };
 
 export function useProduceState<S>(
-  initState: S | (() => S),
+  initState: S,
   observer: ((newState: S) => void) = noop
 ): [S, React.Dispatch<React.SetStateAction<S>>] {
   const [state, setState] = React.useState(initState);
-  const cb = (mutatorOrValue: any, next?: Function) => {
+  const cb = (mutatorOrValue: S | (() => S), next?: Function) => {
     if (isFunction(mutatorOrValue)) {
       // is a function, put it through immer
-      setState((s: any) => produce(s, d => void mutatorOrValue(d)));
+      const mutator = mutatorOrValue as any; // failed to get this working: const mutator = mutatorOrValue; // as ((draft: Draft<S>) => S);
+      setState((s: S) => produce<S>(s, d => void mutator(d)));
       observer(state);
     } else {
       // is a value
+      const value = mutatorOrValue as S;
       setState(mutatorOrValue);
-      observer(mutatorOrValue);
+      observer(value);
     }
     if (next) next(); // post setState callback
   };
@@ -26,7 +28,7 @@ export function useProduceState<S>(
 }
 
 // https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
-function isFunction(functionToCheck?: Function) {
+function isFunction<T>(functionToCheck: Function | T) {
   return (
     functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
   );
