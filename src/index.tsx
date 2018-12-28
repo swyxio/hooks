@@ -34,7 +34,16 @@ function isFunction<T>(functionToCheck: Function | T) {
   );
 }
 
-export function useInput(initialValue = '', stateObserver: any = noop) {
+/** a hook to be spread right into an input element.
+ * eg `<input {...useInput('')}>`
+ * also returns a `setValue`  where you can manually set value... just in case
+ * */
+export function useInput(
+  /** set initial value */
+  initialValue: string | number = '',
+  /** pass a callback if you want to know about changes */
+  stateObserver: Function = noop
+) {
   const [value, setValue] = React.useState(initialValue);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
