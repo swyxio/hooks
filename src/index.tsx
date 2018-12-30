@@ -34,14 +34,19 @@ function isFunction<T>(functionToCheck: Function | T) {
   );
 }
 
-/** a hook to be spread right into an input element.
+/**
+ * **useInput hook:**
+ *
+ * a hook to be spread right into an input element.
  * eg `<input {...useInput('')}>`
- * also returns a `setValue`  where you can manually set value... just in case
+ *
+ * also exposes a `resetValue`  to reset the value to initialvalue
+ * also exposes a `setValue`  where you can manually set value... just in case
  * */
 export function useInput(
-  /** set initial value */
-  initialValue: string | number = '',
-  /** pass a callback if you want to know about changes */
+  /** prop: set initial value */
+  initialValue: string = '',
+  /** prop: pass a callback if you want to know about changes */
   stateObserver: Function = noop
 ) {
   const [value, setValue] = React.useState(initialValue);
@@ -49,7 +54,8 @@ export function useInput(
     setValue(e.target.value);
     stateObserver(e.target.value);
   };
-  return { value, onChange, setValue };
+  const resetValue = () => setValue(initialValue);
+  return { value, onChange, setValue, resetValue };
 }
 
 export function useLoading() {
