@@ -68,7 +68,7 @@ export function useLoading() {
   };
   return [isLoading, load] as [
     boolean,
-    (aPromise: Promise<any>) => Promise<any>
+    <T>(aPromise: Promise<T>) => Promise<T>
   ];
 }
 
