@@ -50,7 +50,7 @@ function App() {
   const [isLoading, load] = useLoading();
   const [state, setState] = React.useState('you shouldnt see this');
   React.useEffect(() => {
-    pingAPI(2000).then(setState('hello there'));
+    load(pingAPI(2000)).then(() => setState('hello there'));
   });
   return isLoading ? <div>Loading</div> : <div>{state}</div>;
 }
