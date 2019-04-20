@@ -19,6 +19,7 @@
     "start": "rollup -c -w",
     "prepare": "yarn run build",
     "predeploy": "cd example && yarn install && yarn run build",
+    "prepublishOnly": "git push && git push --tags && gh-release",
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {

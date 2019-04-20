@@ -66,7 +66,7 @@ export function useInput(
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.type === "checkbox") {
+    if (e.target.type === "checkbox") {
       throw new Error(
         "useInput error - type=checkbox specified, this is likely a mistake by the developer. you may want useCheckInput instead"
       )
@@ -116,7 +116,7 @@ export function useCheckInput(
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.type !== "checkbox") {
+    if (e.target.type !== "checkbox") {
       throw new Error("useCheckInput error - no checkbox specified, this is likely a mistake by the developer")
     }
     const val = e.target.checked
