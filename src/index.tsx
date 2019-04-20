@@ -41,11 +41,14 @@ function isFunction<T>(functionToCheck: Function | T) {
  * also exposes a `resetValue` to reset the value to initialvalue
  * also exposes a `setValue`  where you can manually set value... just in case
  * instead of passing defaultValue to your input, pass it to useInput!
+ * pass array of strings too :)
+ * if you are making a checkbox, use `useCheckInput` instead
  *
  * */
-export function useInput<T = string>(
+const STRINGARRAYSERIALIZER = "#*#*#*#*#*STRINGARRAYSERIALIZER#*#*#*#*#*"
+export function useInput(
   /** prop: set initial value */
-  initialValue: T | number | string | boolean,
+  initialValue: number | string | string[],
   /** prop: pass a callback if you want to know about changes */
   stateObserver?: (arg: typeof initialValue) => void,
   /** if you want to persist to localstorage, pass a name for it! */
@@ -56,14 +59,67 @@ export function useInput<T = string>(
   // safely check localstorage and coerce the right types
   if (window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
-    if (v && typeof initialValue == "number") _initialValue = Number(v)
-    else if (v && typeof initialValue == "boolean") _initialValue = Boolean(v)
+    if (v && typeof initialValue === "number") _initialValue = Number(v)
+    else if (v && Array.isArray(v)) _initialValue = v.split(STRINGARRAYSERIALIZER)
     else if (v) _initialValue = v // string
   }
 
-  const [value, setValue] = React.useState<typeof initialValue>(_initialValue)
+  let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.type === "checkbox" ? e.target.checked : e.target.value
+    if (e.type === "checkbox") {
+      throw new Error(
+        "useInput error - type=checkbox specified, this is likely a mistake by the developer. you may want useCheckInput instead"
+      )
+    }
+    const val = e.target.value
+    setValue(val)
+    if (window && window.localStorage && typeof localStorageName === "string") {
+      if (val !== initialValue) {
+        localStorage.setItem(localStorageName, String(Array.isArray(val) ? val.join(STRINGARRAYSERIALIZER) : val))
+      } else {
+        localStorage.removeItem(localStorageName)
+      }
+    }
+    if (stateObserver) stateObserver(val)
+  }
+  const resetValue = () => setValue(initialValue)
+  return { onChange, value, setValue, resetValue }
+}
+
+/**
+ * **useCheckInput hook:**
+ *
+ * a hook to be spread right into an input type="checkbox" element.
+ * eg `<input type="checkbox" {...useCheckInput(false)}>`
+ *
+ * also exposes a `resetValue` to reset the value to initialvalue
+ * also exposes a `setValue`  where you can manually set value... just in case
+ * instead of passing defaultValue to your input, pass it to useCheckInput!
+ *
+ * */
+
+export function useCheckInput(
+  /** prop: set initial value */
+  initialValue: boolean,
+  /** prop: pass a callback if you want to know about changes */
+  stateObserver?: (arg: boolean) => void,
+  /** if you want to persist to localstorage, pass a name for it! */
+  localStorageName?: String
+) {
+  let _initialValue = initialValue
+
+  // safely check localstorage and coerce the right types
+  if (window && window.localStorage && typeof localStorageName === "string") {
+    let v = localStorage.getItem(localStorageName)
+    _initialValue = v === "true" // dont cast strings with Boolean lol
+  }
+
+  let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.type !== "checkbox") {
+      throw new Error("useCheckInput error - no checkbox specified, this is likely a mistake by the developer")
+    }
+    const val = e.target.checked
     setValue(val)
     if (window.localStorage && typeof localStorageName === "string") {
       if (val !== initialValue) {
@@ -75,7 +131,7 @@ export function useInput<T = string>(
     if (stateObserver) stateObserver(val)
   }
   const resetValue = () => setValue(initialValue)
-  return { value, onChange, setValue, resetValue }
+  return { onChange, checked: value, setValue, resetValue }
 }
 
 export function useLoading() {
