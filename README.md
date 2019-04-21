@@ -43,6 +43,7 @@ export default function InputArea({ onSubmit, defaultValue }) {
 // note:
 // There is also a `useCheckInput` hook that just has special return values for the platform
 // we will warn you if you dont do this
+// there are also extra otions you can pass to useInput as a second arg.
 
 // useLoading demo
 function App() {

@@ -49,11 +49,16 @@ const STRINGARRAYSERIALIZER = "#*#*#*#*#*STRINGARRAYSERIALIZER#*#*#*#*#*"
 export function useInput(
   /** prop: set initial value */
   initialValue: number | string | string[],
-  /** prop: pass a callback if you want to know about changes */
-  stateObserver?: (arg: typeof initialValue) => void,
-  /** if you want to persist to localstorage, pass a name for it! */
-  localStorageName?: String
+  options: {
+    /** prop: pass a callback if you want to know about changes */
+    stateObserver?: (arg: typeof initialValue) => void
+    /** if you want to persist to localstorage, pass a name for it! */
+    localStorageName?: String
+    /** pass true if you want a resetValue or setValue */
+    controlled?: boolean
+  }
 ) {
+  const { stateObserver, localStorageName, controlled } = options
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
@@ -65,7 +70,7 @@ export function useInput(
   }
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: { target: { type: string; value: string } }) => {
     if (e.target.type === "checkbox") {
       throw new Error(
         "useInput error - type=checkbox specified, this is likely a mistake by the developer. you may want useCheckInput instead"
@@ -83,7 +88,11 @@ export function useInput(
     if (stateObserver) stateObserver(val)
   }
   const resetValue = () => setValue(initialValue)
-  return { onChange, value, setValue, resetValue }
+  if (controlled) {
+    return { onChange, value, setValue, resetValue }
+  } else {
+    return { onChange, value }
+  }
 }
 
 /**
@@ -101,11 +110,16 @@ export function useInput(
 export function useCheckInput(
   /** prop: set initial value */
   initialValue: boolean,
-  /** prop: pass a callback if you want to know about changes */
-  stateObserver?: (arg: boolean) => void,
-  /** if you want to persist to localstorage, pass a name for it! */
-  localStorageName?: String
+  options: {
+    /** prop: pass a callback if you want to know about changes */
+    stateObserver?: (arg: boolean) => void
+    /** if you want to persist to localstorage, pass a name for it! */
+    localStorageName?: String
+    /** pass true if you want a resetValue or setValue */
+    controlled?: boolean
+  }
 ) {
+  const { stateObserver, localStorageName, controlled } = options
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
@@ -115,7 +129,7 @@ export function useCheckInput(
   }
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: { target: { type: string; checked: boolean } }) => {
     if (e.target.type !== "checkbox") {
       throw new Error("useCheckInput error - no checkbox specified, this is likely a mistake by the developer")
     }
@@ -131,7 +145,11 @@ export function useCheckInput(
     if (stateObserver) stateObserver(val)
   }
   const resetValue = () => setValue(initialValue)
-  return { onChange, checked: value, setValue, resetValue }
+  if (controlled) {
+    return { onChange, checked: value, setValue, resetValue }
+  } else {
+    return { onChange, checked: value }
+  }
 }
 
 export function useLoading() {
