@@ -46,10 +46,15 @@ function isFunction<T>(functionToCheck: Function | T) {
  *
  * */
 const STRINGARRAYSERIALIZER = "#*#*#*#*#*STRINGARRAYSERIALIZER#*#*#*#*#*"
+const noOptions = {
+  stateObserver: noop,
+  localStorageName: undefined,
+  controlled: false
+}
 export function useInput(
   /** prop: set initial value */
   initialValue: number | string | string[],
-  options: {
+  options?: {
     /** prop: pass a callback if you want to know about changes */
     stateObserver?: (arg: typeof initialValue) => void
     /** if you want to persist to localstorage, pass a name for it! */
@@ -58,7 +63,7 @@ export function useInput(
     controlled?: boolean
   }
 ) {
-  const { stateObserver, localStorageName, controlled } = options
+  const { stateObserver, localStorageName, controlled } = options || noOptions
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
@@ -110,7 +115,7 @@ export function useInput(
 export function useCheckInput(
   /** prop: set initial value */
   initialValue: boolean,
-  options: {
+  options?: {
     /** prop: pass a callback if you want to know about changes */
     stateObserver?: (arg: boolean) => void
     /** if you want to persist to localstorage, pass a name for it! */
@@ -119,7 +124,7 @@ export function useCheckInput(
     controlled?: boolean
   }
 ) {
-  const { stateObserver, localStorageName, controlled } = options
+  const { stateObserver, localStorageName, controlled } = options || noOptions
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
