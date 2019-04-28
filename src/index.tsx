@@ -159,13 +159,18 @@ export function useCheckInput(
 
 export function useLoading() {
   const [isLoading, setState] = React.useState(false)
+  const mount = React.useRef(false)
+  React.useEffect(() => {
+    mount.current = true
+    return () => void (mount.current = false)
+  }, [])
   const load = (aPromise: Promise<any>) => {
     setState(true)
     return aPromise.finally(() => {
-      setState(false)
+      if (mount.current) setState(false)
     })
   }
-  return [isLoading, load] as [boolean, <T>(aPromise: Promise<T>) => Promise<T>]
+  return [isLoading, load] as const
 }
 
 export function useKeydown(key: string, handler: Function) {
