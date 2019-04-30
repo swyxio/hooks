@@ -32,25 +32,28 @@ function isFunction<T>(functionToCheck: Function | T) {
   return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]"
 }
 
-/**
- * **useInput hook:**
- *
- * a hook to be spread right into an input element.
- * eg `<input {...useInput('')}>`
- *
- * also exposes a `resetValue` to reset the value to initialvalue
- * also exposes a `setValue`  where you can manually set value... just in case
- * instead of passing defaultValue to your input, pass it to useInput!
- * pass array of strings too :)
- * if you are making a checkbox, use `useCheckInput` instead
- *
- * */
 const STRINGARRAYSERIALIZER = "#*#*#*#*#*STRINGARRAYSERIALIZER#*#*#*#*#*"
 const noOptions = {
   stateObserver: noop,
   localStorageName: undefined,
   controlled: false
 }
+/**
+ * **useInput hook:**
+ *
+ * a hook to be spread right into an input element.
+ * eg `<input {...useInput('')}>`
+ *
+ * if you pass controlled = true,
+ * 
+ * - it exposes a `resetValue` to reset the value to initialvalue
+ * - it also exposes a `setValue`  where you can manually set value... just in case
+ * 
+ * instead of passing defaultValue to your input, pass it to useInput!
+ * pass array of strings too :)
+ * if you are making a checkbox, use `useCheckInput` instead
+ *
+ * */
 export function useInput(
   /** prop: set initial value */
   initialValue: number | string | string[],
@@ -81,7 +84,7 @@ export function useInput(
         "useInput error - type=checkbox specified, this is likely a mistake by the developer. you may want useCheckInput instead"
       )
     }
-    const val = e.target.value
+    let val = typeof initialValue === 'number' ? Number(e.target.value) : e.target.value
     setValue(val)
     if (typeof window !== 'undefined' && window.localStorage && typeof localStorageName === "string") {
       if (val !== initialValue) {
