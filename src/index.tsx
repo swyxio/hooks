@@ -72,9 +72,12 @@ export function useInput(
   // safely check localstorage and coerce the right types
   if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
-    if (v && typeof initialValue === "number") _initialValue = Number(v)
-    else if (v && Array.isArray(v)) _initialValue = v.split(STRINGARRAYSERIALIZER)
-    else if (v) _initialValue = v // string
+    if (v) {
+      if (typeof initialValue === "number") _initialValue = Number(v)
+      else if (Array.isArray(v)) _initialValue = v.split(STRINGARRAYSERIALIZER)
+      else _initialValue = v // string
+      if (stateObserver) stateObserver(_initialValue)
+    }
   }
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
@@ -131,7 +134,10 @@ export function useCheckInput(
   // safely check localstorage and coerce the right types
   if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
-    if (v) _initialValue = v === "true" // dont cast strings with Boolean lol
+    if (v) {
+      _initialValue = v === "true" // dont cast strings with Boolean lol
+      if (stateObserver) stateObserver(_initialValue)
+    }
   }
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
