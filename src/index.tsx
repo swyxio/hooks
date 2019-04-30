@@ -45,10 +45,10 @@ const noOptions = {
  * eg `<input {...useInput('')}>`
  *
  * if you pass controlled = true,
- * 
+ *
  * - it exposes a `resetValue` to reset the value to initialvalue
  * - it also exposes a `setValue`  where you can manually set value... just in case
- * 
+ *
  * instead of passing defaultValue to your input, pass it to useInput!
  * pass array of strings too :)
  * if you are making a checkbox, use `useCheckInput` instead
@@ -70,7 +70,7 @@ export function useInput(
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
-  if (typeof window !== 'undefined' && window.localStorage && typeof localStorageName === "string") {
+  if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
     if (v && typeof initialValue === "number") _initialValue = Number(v)
     else if (v && Array.isArray(v)) _initialValue = v.split(STRINGARRAYSERIALIZER)
@@ -84,9 +84,9 @@ export function useInput(
         "useInput error - type=checkbox specified, this is likely a mistake by the developer. you may want useCheckInput instead"
       )
     }
-    let val = typeof initialValue === 'number' ? Number(e.target.value) : e.target.value
+    let val = typeof initialValue === "number" ? Number(e.target.value) : e.target.value
     setValue(val)
-    if (typeof window !== 'undefined' && window.localStorage && typeof localStorageName === "string") {
+    if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
       if (val !== initialValue) {
         localStorage.setItem(localStorageName, String(Array.isArray(val) ? val.join(STRINGARRAYSERIALIZER) : val))
       } else {
@@ -114,7 +114,6 @@ export function useInput(
  * instead of passing defaultValue to your input, pass it to useCheckInput!
  *
  * */
-
 export function useCheckInput(
   /** prop: set initial value */
   initialValue: boolean,
@@ -129,11 +128,10 @@ export function useCheckInput(
 ) {
   const { stateObserver, localStorageName, controlled } = options || noOptions
   let _initialValue = initialValue
-
   // safely check localstorage and coerce the right types
-  if (typeof window !== 'undefined' && window.localStorage && typeof localStorageName === "string") {
+  if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
-    _initialValue = v === "true" // dont cast strings with Boolean lol
+    if (v) _initialValue = v === "true" // dont cast strings with Boolean lol
   }
 
   let [value, setValue] = React.useState<typeof _initialValue>(_initialValue)
@@ -143,7 +141,7 @@ export function useCheckInput(
     }
     const val = e.target.checked
     setValue(val)
-    if (typeof window !== 'undefined' && window.localStorage && typeof localStorageName === "string") {
+    if (typeof window !== "undefined" && window.localStorage && typeof localStorageName === "string") {
       if (val !== initialValue) {
         localStorage.setItem(localStorageName, String(val))
       } else {
