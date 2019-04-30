@@ -67,7 +67,7 @@ export function useInput(
   let _initialValue = initialValue
 
   // safely check localstorage and coerce the right types
-  if (window.localStorage && typeof localStorageName === "string") {
+  if (window && window.localStorage && typeof localStorageName === "string") {
     let v = localStorage.getItem(localStorageName)
     if (v && typeof initialValue === "number") _initialValue = Number(v)
     else if (v && Array.isArray(v)) _initialValue = v.split(STRINGARRAYSERIALIZER)
@@ -140,7 +140,7 @@ export function useCheckInput(
     }
     const val = e.target.checked
     setValue(val)
-    if (window.localStorage && typeof localStorageName === "string") {
+    if (window && window.localStorage && typeof localStorageName === "string") {
       if (val !== initialValue) {
         localStorage.setItem(localStorageName, String(val))
       } else {
